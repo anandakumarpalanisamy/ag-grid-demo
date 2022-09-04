@@ -1,9 +1,26 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-enterprise";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
+
+const dateComparator = (dateFromFilter, cellValue) => {
+  if (cellValue === null) {
+    return 0;
+  }
+  const dateParts = cellValue.split("/");
+  const day = Number(dateParts[0]);
+  const month = Number(dateParts[1] - 1);
+  const year = Number(dateParts[2]);
+  const cellDate = new Date(year, month, day);
+  if (cellDate < dateFromFilter) {
+    return -1;
+  } else if (cellDate > dateFromFilter) {
+    return 1;
+  }
+  return 0;
+};
 
 const MedalCellRenderer = (props) => (
   <span>{new Array(parseInt(props.value)).fill("#").join("")}</span>
@@ -44,12 +61,19 @@ function App() {
   );
 
   const [columnDefs] = useState([
-    { field: "athlete" },
-    { field: "age" },
-    { field: "country" },
+    { field: "athlete", filter: "agTextColumnFilter" },
+    { field: "age", filter: "agNumberColumnFilter" },
+    { field: "country", filter: "agMultiColumnFilter" },
     { field: "year" },
     // Demo of overriding the default coldefs
-    { field: "date" },
+    {
+      field: "date",
+      filter: "agDateColumnFilter",
+      filterParams: {
+        comparator: (dateFromFilter, cellValue) =>
+          dateComparator(dateFromFilter, cellValue),
+      },
+    },
     { field: "sport" },
     { field: "gold", cellRenderer: MedalCellRenderer },
     { field: "silver", cellRenderer: MedalCellRenderer },
@@ -62,9 +86,24 @@ function App() {
       sortable: true,
       filter: true,
       enableRowGroup: true,
+      floatingFilter: true,
+      filterParams: {
+        buttons: ["apply", "clear"],
+      },
     }),
     []
   );
+
+  const savedFilterState = useRef();
+
+  const onSave = useCallback(() => {
+    const filterModel = gridRef.current.api.getFilterModel();
+    savedFilterState.current = filterModel;
+  }, []);
+
+  const onApply = useCallback(() => {
+    gridRef.current.api.setFilterModel(savedFilterState.current);
+  }, []);
 
   useEffect(() => {
     fetch("https://www.ag-grid.com/example-assets/olympic-winners.json")
@@ -74,6 +113,10 @@ function App() {
 
   return (
     <div className="ag-theme-alpine-dark" style={{ height: "100vh" }}>
+      <div>
+        <button onClick={onSave}>Save</button>
+        <button onClick={onApply}>Apply</button>
+      </div>
       <AgGridReact
         ref={gridRef}
         gridOptions={gridOptions}
