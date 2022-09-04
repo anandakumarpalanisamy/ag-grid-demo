@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
+import "ag-grid-enterprise";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
@@ -10,6 +11,15 @@ function App() {
   const gridOptions = {
     rowSelection: "multiple",
     animateRows: true,
+    sideBar: true,
+    rowGroupPanelShow: "onlyWhenGrouping",
+    statusBar: {
+      statusPanels: [
+        { statusPanel: "agTotalRowCountComponent", align: "left" },
+        { statusPanel: "agFilteredRowCountComponent", align: "center" },
+        { statusPanel: "agSelectedRowCountComponent", align: "right" },
+      ],
+    },
   };
 
   const columnDefs = [
@@ -19,7 +29,7 @@ function App() {
     { field: "year" },
     // Demo of overriding the default coldefs
     { field: "date", filter: false },
-    { field: "sport" },
+    { field: "sport", enableRowGroup: false },
     { field: "gold" },
     { field: "silver" },
     { field: "bronze" },
@@ -29,6 +39,7 @@ function App() {
   const defaultColDef = {
     sortable: true,
     filter: true,
+    enableRowGroup: true,
   };
 
   useEffect(() => {
