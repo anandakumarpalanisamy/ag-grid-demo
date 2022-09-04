@@ -11,7 +11,6 @@ function App() {
   const gridOptions = {
     rowSelection: "multiple",
     animateRows: true,
-    sideBar: true,
     rowGroupPanelShow: "onlyWhenGrouping",
     statusBar: {
       statusPanels: [
