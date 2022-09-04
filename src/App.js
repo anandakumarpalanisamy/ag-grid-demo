@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-enterprise";
 import "ag-grid-community/dist/styles/ag-grid.css";
@@ -6,6 +6,8 @@ import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
 
 function App() {
+  const gridRef = useRef();
+
   const [rowData, setRowData] = useState([]);
 
   const gridOptions = {
@@ -47,9 +49,20 @@ function App() {
       .then((rowData) => setRowData(rowData));
   }, []);
 
+  const cellClicked = useCallback((e) => {
+    console.log(e);
+  }, []);
+
+  const buttonClicked = useCallback((e) => {
+    gridRef.current.api.deselectAll();
+  }, []);
+
   return (
     <div className="ag-theme-alpine-dark" style={{ height: "100vh" }}>
+      <button onClick={buttonClicked}>Click Me!!!</button>
       <AgGridReact
+        ref={gridRef}
+        onCellClicked={cellClicked}
         gridOptions={gridOptions}
         rowData={rowData}
         columnDefs={columnDefs}
