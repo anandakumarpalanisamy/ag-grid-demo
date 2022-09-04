@@ -27,18 +27,21 @@ function App() {
 
   const [rowData, setRowData] = useState();
 
-  const gridOptions = {
-    rowSelection: "multiple",
-    animateRows: true,
-    rowGroupPanelShow: "always",
-    statusBar: {
-      statusPanels: [
-        { statusPanel: "agTotalRowCountComponent", align: "left" },
-        { statusPanel: "agFilteredRowCountComponent", align: "center" },
-        { statusPanel: "agSelectedRowCountComponent", align: "right" },
-      ],
-    },
-  };
+  const gridOptions = useMemo(
+    () => ({
+      rowSelection: "multiple",
+      animateRows: true,
+      rowGroupPanelShow: "always",
+      statusBar: {
+        statusPanels: [
+          { statusPanel: "agTotalRowCountComponent", align: "left" },
+          { statusPanel: "agFilteredRowCountComponent", align: "center" },
+          { statusPanel: "agSelectedRowCountComponent", align: "right" },
+        ],
+      },
+    }),
+    []
+  );
 
   const [columnDefs] = useState([
     { field: "athlete" },
