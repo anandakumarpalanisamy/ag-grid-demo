@@ -1,14 +1,31 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-enterprise";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
 
+const MedalCellRenderer = (props) => (
+  <span>{new Array(parseInt(props.value)).fill("#").join("")}</span>
+);
+
+const TotalCellRenderer = (props) => {
+  const buttonClicked = () => {
+    alert(`${props.value} medals won!`);
+  };
+
+  return (
+    <span>
+      <span>{props.value}</span>
+      <button onClick={buttonClicked}>Push For Total</button>
+    </span>
+  );
+};
+
 function App() {
   const gridRef = useRef();
 
-  const [rowData, setRowData] = useState([]);
+  const [rowData, setRowData] = useState();
 
   const gridOptions = {
     rowSelection: "multiple",
@@ -23,25 +40,28 @@ function App() {
     },
   };
 
-  const columnDefs = [
+  const [columnDefs] = useState([
     { field: "athlete" },
     { field: "age" },
     { field: "country" },
     { field: "year" },
     // Demo of overriding the default coldefs
-    { field: "date", filter: false },
-    { field: "sport", enableRowGroup: false },
-    { field: "gold" },
-    { field: "silver" },
-    { field: "bronze" },
-    { field: "total" },
-  ];
+    { field: "date" },
+    { field: "sport" },
+    { field: "gold", cellRenderer: MedalCellRenderer },
+    { field: "silver", cellRenderer: MedalCellRenderer },
+    { field: "bronze", cellRenderer: MedalCellRenderer },
+    { field: "total", cellRenderer: TotalCellRenderer },
+  ]);
 
-  const defaultColDef = {
-    sortable: true,
-    filter: true,
-    enableRowGroup: true,
-  };
+  const defaultColDef = useMemo(
+    () => ({
+      sortable: true,
+      filter: true,
+      enableRowGroup: true,
+    }),
+    []
+  );
 
   useEffect(() => {
     fetch("https://www.ag-grid.com/example-assets/olympic-winners.json")
@@ -49,20 +69,10 @@ function App() {
       .then((rowData) => setRowData(rowData));
   }, []);
 
-  const cellClicked = useCallback((e) => {
-    console.log(e);
-  }, []);
-
-  const buttonClicked = useCallback((e) => {
-    gridRef.current.api.deselectAll();
-  }, []);
-
   return (
     <div className="ag-theme-alpine-dark" style={{ height: "100vh" }}>
-      <button onClick={buttonClicked}>Click Me!!!</button>
       <AgGridReact
         ref={gridRef}
-        onCellClicked={cellClicked}
         gridOptions={gridOptions}
         rowData={rowData}
         columnDefs={columnDefs}
