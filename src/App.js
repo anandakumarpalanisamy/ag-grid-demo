@@ -5,9 +5,9 @@ import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
 
 function App() {
-  const [rowData, setRowData] = useState([]);
+  const [rowData, setRowData] = useState();
 
-  const columnDefs = [
+  const [columnDefs] = useState([
     { field: "athlete" },
     { field: "age" },
     { field: "country" },
@@ -18,7 +18,7 @@ function App() {
     { field: "silver" },
     { field: "bronze" },
     { field: "total" },
-  ];
+  ]);
 
   useEffect(() => {
     fetch("https://www.ag-grid.com/example-assets/olympic-winners.json")
