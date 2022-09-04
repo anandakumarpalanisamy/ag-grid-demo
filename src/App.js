@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
@@ -12,13 +12,19 @@ function App() {
     { field: "age" },
     { field: "country" },
     { field: "year" },
-    { field: "date" },
+    // Demo of overriding the default coldefs
+    { field: "date", filter: false },
     { field: "sport" },
     { field: "gold" },
     { field: "silver" },
     { field: "bronze" },
     { field: "total" },
   ];
+
+  const defaultColDef = {
+    sortable: true,
+    filter: true,
+  };
 
   useEffect(() => {
     fetch("https://www.ag-grid.com/example-assets/olympic-winners.json")
@@ -28,7 +34,11 @@ function App() {
 
   return (
     <div className="ag-theme-alpine-dark" style={{ height: "100vh" }}>
-      <AgGridReact rowData={rowData} columnDefs={columnDefs} />
+      <AgGridReact
+        rowData={rowData}
+        columnDefs={columnDefs}
+        defaultColDef={defaultColDef}
+      />
     </div>
   );
 }
