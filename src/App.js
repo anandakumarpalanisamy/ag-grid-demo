@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-enterprise";
 import "ag-grid-community/dist/styles/ag-grid.css";
@@ -8,22 +8,25 @@ import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
 function App() {
   const gridRef = useRef();
 
-  const [rowData, setRowData] = useState([]);
+  const [rowData, setRowData] = useState();
 
-  const gridOptions = {
-    rowSelection: "multiple",
-    animateRows: true,
-    rowGroupPanelShow: "always",
-    statusBar: {
-      statusPanels: [
-        { statusPanel: "agTotalRowCountComponent", align: "left" },
-        { statusPanel: "agFilteredRowCountComponent", align: "center" },
-        { statusPanel: "agSelectedRowCountComponent", align: "right" },
-      ],
-    },
-  };
+  const gridOptions = useMemo(
+    () => ({
+      rowSelection: "multiple",
+      animateRows: true,
+      rowGroupPanelShow: "always",
+      statusBar: {
+        statusPanels: [
+          { statusPanel: "agTotalRowCountComponent", align: "left" },
+          { statusPanel: "agFilteredRowCountComponent", align: "center" },
+          { statusPanel: "agSelectedRowCountComponent", align: "right" },
+        ],
+      },
+    }),
+    []
+  );
 
-  const columnDefs = [
+  const [columnDefs] = useState([
     { field: "athlete" },
     { field: "age" },
     { field: "country" },
@@ -35,13 +38,16 @@ function App() {
     { field: "silver" },
     { field: "bronze" },
     { field: "total" },
-  ];
+  ]);
 
-  const defaultColDef = {
-    sortable: true,
-    filter: true,
-    enableRowGroup: true,
-  };
+  const defaultColDef = useMemo(
+    () => ({
+      sortable: true,
+      filter: true,
+      enableRowGroup: true,
+    }),
+    []
+  );
 
   useEffect(() => {
     fetch("https://www.ag-grid.com/example-assets/olympic-winners.json")
