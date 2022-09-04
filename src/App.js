@@ -7,6 +7,11 @@ import "ag-grid-community/dist/styles/ag-theme-alpine-dark.css";
 function App() {
   const [rowData, setRowData] = useState([]);
 
+  const gridOptions = {
+    rowSelection: "multiple",
+    animateRows: true,
+  };
+
   const columnDefs = [
     { field: "athlete" },
     { field: "age" },
@@ -35,8 +40,7 @@ function App() {
   return (
     <div className="ag-theme-alpine-dark" style={{ height: "100vh" }}>
       <AgGridReact
-        rowSelection="multiple"
-        animateRows={true}
+        gridOptions={gridOptions}
         rowData={rowData}
         columnDefs={columnDefs}
         defaultColDef={defaultColDef}
