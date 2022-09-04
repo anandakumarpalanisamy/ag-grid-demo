@@ -11,7 +11,7 @@ function App() {
   const gridOptions = {
     rowSelection: "multiple",
     animateRows: true,
-    rowGroupPanelShow: "onlyWhenGrouping",
+    rowGroupPanelShow: "always",
     statusBar: {
       statusPanels: [
         { statusPanel: "agTotalRowCountComponent", align: "left" },
