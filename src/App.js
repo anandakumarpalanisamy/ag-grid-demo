@@ -1,4 +1,13 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  forwardRef,
+  memo,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-enterprise";
 import "ag-grid-community/dist/styles/ag-grid.css";
@@ -52,6 +61,34 @@ const AgeCellRenderer = (props) => {
   );
 };
 
+const MyEditor = memo(
+  forwardRef((props, ref) => {
+    const [value, setValue] = useState(parseInt(props.value));
+    const refInput = useRef(null);
+
+    useImperativeHandle(ref, () => {
+      return {
+        getValue() {
+          return value;
+        },
+      };
+    });
+
+    const onChange = useCallback((event) => setValue(event.target.value), []);
+    useEffect(() => refInput.current.focus(), []);
+
+    return (
+      <input
+        type="number"
+        className="my-editor"
+        ref={refInput}
+        value={value}
+        onChange={onChange}
+      />
+    );
+  })
+);
+
 function App() {
   const gridRef = useRef();
 
@@ -92,7 +129,7 @@ function App() {
       },
     },
     { field: "sport" },
-    { field: "gold", cellRenderer: MedalCellRenderer },
+    { field: "gold", cellRenderer: MedalCellRenderer, cellEditor: MyEditor },
     { field: "silver", cellRenderer: MedalCellRenderer },
     { field: "bronze", cellRenderer: MedalCellRenderer },
     { field: "total", cellRenderer: TotalCellRenderer },
@@ -107,6 +144,7 @@ function App() {
       filterParams: {
         buttons: ["apply", "clear"],
       },
+      editable: true,
     }),
     []
   );
@@ -122,6 +160,16 @@ function App() {
     gridRef.current.api.setFilterModel(savedFilterState.current);
   }, []);
 
+  const onClickIncreaseMedals = useCallback(() => {
+    const gridApi = gridRef.current.api;
+    gridApi.forEachNode((rowNode) => {
+      ["gold", "silver"].forEach((colId) => {
+        const currentVal = gridApi.getValue(colId, rowNode);
+        rowNode.setDataValue(colId, currentVal + 1);
+      });
+    });
+  }, []);
+
   useEffect(() => {
     fetch("https://www.ag-grid.com/example-assets/olympic-winners.json")
       .then((result) => result.json())
@@ -133,6 +181,7 @@ function App() {
       <div>
         <button onClick={onSave}>Save</button>
         <button onClick={onApply}>Apply</button>
+        <button onClick={onClickIncreaseMedals}>Increase Medals</button>
       </div>
       <AgGridReact
         ref={gridRef}
