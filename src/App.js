@@ -9,6 +9,19 @@ const MedalCellRenderer = (props) => (
   <span>{new Array(parseInt(props.value)).fill("#").join("")}</span>
 );
 
+const AgeCellRenderer = (props) => {
+  return (
+    <span className="my-renderer">
+      <img
+        className="my-spinner"
+        src="https://d1yk6z6emsz7qy.cloudfront.net/static/images/loading.gif"
+        alt="age-loading"
+      />
+      {props.value}
+    </span>
+  );
+};
+
 const TotalCellRenderer = (props) => {
   const buttonClicked = () => {
     alert(`${props.value} medals won!`);
@@ -45,7 +58,7 @@ function App() {
 
   const [columnDefs] = useState([
     { field: "athlete" },
-    { field: "age" },
+    { field: "age", cellRenderer: AgeCellRenderer },
     { field: "country" },
     { field: "year" },
     // Demo of overriding the default coldefs
