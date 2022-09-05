@@ -111,7 +111,13 @@ function App() {
   );
 
   const [columnDefs] = useState([
-    { field: "athlete", filter: "agTextColumnFilter" },
+    {
+      field: "athlete",
+      filter: "agTextColumnFilter",
+      width: 150,
+      minWidth: 100,
+      maxWidth: 200,
+    },
     {
       field: "age",
       cellRenderer: AgeCellRenderer,
@@ -129,10 +135,32 @@ function App() {
       },
     },
     { field: "sport" },
-    { field: "gold", cellRenderer: MedalCellRenderer, cellEditor: MyEditor },
-    { field: "silver", cellRenderer: MedalCellRenderer },
-    { field: "bronze", cellRenderer: MedalCellRenderer },
-    { field: "total", cellRenderer: TotalCellRenderer },
+    {
+      headerName: "Medals",
+      children: [
+        {
+          field: "gold",
+          cellRenderer: MedalCellRenderer,
+          cellEditor: MyEditor,
+          columnGroupShow: "open",
+        },
+        {
+          field: "silver",
+          cellRenderer: MedalCellRenderer,
+          columnGroupShow: "open",
+        },
+        {
+          field: "bronze",
+          cellRenderer: MedalCellRenderer,
+          columnGroupShow: "open",
+        },
+        {
+          field: "total",
+          cellRenderer: TotalCellRenderer,
+          columnGroupShow: "closed",
+        },
+      ],
+    },
   ]);
 
   const defaultColDef = useMemo(
@@ -144,6 +172,7 @@ function App() {
       filterParams: {
         buttons: ["apply", "clear"],
       },
+      resizable: true,
       editable: true,
     }),
     []
