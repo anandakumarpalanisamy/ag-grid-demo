@@ -39,6 +39,19 @@ const TotalCellRenderer = (props) => {
   );
 };
 
+const AgeCellRenderer = (props) => {
+  return (
+    <span className="my-renderer">
+      <img
+        className="my-spinner"
+        src="https://d1yk6z6emsz7qy.cloudfront.net/static/images/loading.gif"
+        alt="age-loading"
+      />
+      {props.value}
+    </span>
+  );
+};
+
 function App() {
   const gridRef = useRef();
 
@@ -62,7 +75,11 @@ function App() {
 
   const [columnDefs] = useState([
     { field: "athlete", filter: "agTextColumnFilter" },
-    { field: "age", filter: "agNumberColumnFilter" },
+    {
+      field: "age",
+      cellRenderer: AgeCellRenderer,
+      filter: "agNumberColumnFilter",
+    },
     { field: "country", filter: "agMultiColumnFilter" },
     { field: "year" },
     // Demo of overriding the default coldefs
