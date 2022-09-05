@@ -206,7 +206,7 @@ function App() {
   }, []);
 
   return (
-    <div className="ag-theme-alpine-dark" style={{ height: "100vh" }}>
+    <div className="ag-theme-alpine" style={{ height: "100vh" }}>
       <div>
         <button onClick={onSave}>Save</button>
         <button onClick={onApply}>Apply</button>
